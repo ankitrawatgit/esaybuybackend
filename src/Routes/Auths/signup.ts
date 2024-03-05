@@ -12,7 +12,7 @@ signuprouter.post('/createuser',[
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({error:"Validation Error occured!"});
-      }
+}
     
     //Accessing cookies
     console.log("Name Cookies:",req.cookies.yournameis)
@@ -22,15 +22,13 @@ signuprouter.post('/createuser',[
     UserService.createUser({
         name:req.body.name
     });
-
-    //setting cookies
+    
     res.cookie('yournameis', req.body.name);
+    //setting cookies
     res.cookie('limitedtimecookie', 'BORA', {
         maxAge: 3600000, // Cookie will expire after 1 hour
-        httpOnly: true, // Cookie is accessible only by the server, not by client-side scripts
+        // httpOnly: true, // Cookie is accessible only by the server, not by client-side scripts
       });
-
-
     res.send('done');
 })
 
