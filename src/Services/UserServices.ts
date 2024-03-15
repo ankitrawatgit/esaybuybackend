@@ -9,7 +9,7 @@ interface userDataIntereface {
     name: string,
     email: string,
     password: string,
-    user: string,
+    username: string,
     image: string | null
 }
 
