@@ -2,9 +2,9 @@ import { Router, Request, Response } from "express";
 import UserService from "../../Services/UserServices";
 import { body, validationResult } from "express-validator";
 
-const signuprouter = Router();
+const authrouter = Router();
 
-signuprouter.post('/createuser', [
+authrouter.post('/createuser', [
     body('name').isString().isLength({ min: 4 }),
     body('email').isEmail(),
     body('password').isString().isLength({ min: 6 }),
@@ -15,12 +15,12 @@ signuprouter.post('/createuser', [
         if (!errors.isEmpty()) {
             return res.status(400).json({ error: "Validation Error occured!" });
         }
-        const { name, email, password, image } = req.body;
+        const { name, email, password, image ,username} = req.body;
 
         //create User
         await UserService.createUser({
-            name, email, password, image
+            name, email, password, image,username
         }, res);
     })
 
-export default signuprouter;
+export default authrouter;

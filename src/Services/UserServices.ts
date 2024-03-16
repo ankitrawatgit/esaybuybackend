@@ -2,8 +2,7 @@ import { Response } from "express";
 import prismaClient from "../db/prismaclient";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-const saltRounds = 100;
-const SECRET_KEY = 'your-secret-key-here';
+const SECRET_KEY = 'manjaroProject';
 
 interface userDataIntereface {
     name: string,
@@ -14,19 +13,14 @@ interface userDataIntereface {
 }
 
 class UserService {
-    //simple jwt logic, can be improved 
-    private static async generateAccessToken(username: string): string {
-        return new Promise((resolve, reject) => {
-            if (!username) {
-                reject("Require a username");
-            }
-            else {
-                resolve(jwt.sign({ username }, SECRET_KEY, { expiresIn: '2 days' }))
-            }
-        })
-
+    
+    private static generateAccessToken(username: string,email:string) {
+        return jwt.sign({ username,email }, SECRET_KEY, { expiresIn: '2 days' })
     }
 
+    public static varifyAccessToken(token:string){
+        return jwt.verify(token,SECRET_KEY);
+    }
 
     private static async generateHash(password: string): Promise<string> {
         return new Promise((resolve, reject) => {
@@ -53,17 +47,17 @@ class UserService {
     public static async createUser(params: userDataIntereface, res: Response) {
         try {
 
-            // const user = await this.getUserByEmail(params.email);
-            // if(user){
-            //     throw new Error("User alrady Exists");
-            // }
+            const user = await this.getUserByEmail(params.email);
+            if(user){
+                throw new Error("User alrady Exists");
+            }
 
             const hashedpass = await this.generateHash(params.password);
 
-            const user = await prismaClient.user.create({ data: { name: params.name, email: params.email, password: hashedpass, image: params.image } })
+            // run npx prisma migrate dev to update schema
+            const newuser = await prismaClient.user.create({ data: { name: params.name,username:params.username, email: params.email, password: hashedpass, image: params.image} })
 
-            console.log(user);
-
+            console.log(newuser);
             return res.status(200).json({ message: 'User created!' })
 
         } catch (error: any) {
