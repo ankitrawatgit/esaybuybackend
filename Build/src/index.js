@@ -5,13 +5,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const authroute_1 = __importDefault(require("./Routes/Auths/authroute"));
+const Jwtvarify_1 = __importDefault(require("./Middleware/Jwtvarify"));
 var cookieParser = require('cookie-parser');
 var cors = require('cors');
 const app = (0, express_1.default)();
 app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 app.use(cookieParser());
 app.use(express_1.default.json());
-app.use('/signup', authroute_1.default);
+app.use('/auth', authroute_1.default);
+app.use('/', Jwtvarify_1.default);
+app.post('/', (req, res) => {
+    console.log(req.user);
+    res.send('done');
+});
 app.listen(8000, () => {
     console.log("Server started!");
 });

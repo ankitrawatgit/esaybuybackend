@@ -7,6 +7,7 @@ const authrouter = Router();
 authrouter.post('/createuser', [
     body('name').isString().isLength({ min: 4 }),
     body('email').isEmail(),
+    body('username').isString().isLength({min:10}),
     body('password').isString().isLength({ min: 6 }),
 ]
     , async (req: Request, res: Response) => {
@@ -22,5 +23,6 @@ authrouter.post('/createuser', [
             name, email, password, image,username
         }, res);
     })
+
 
 export default authrouter;
