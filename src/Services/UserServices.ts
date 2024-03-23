@@ -12,6 +12,14 @@ interface userDataIntereface {
     image: string | null
 }
 
+interface LoginInterface{
+    email:string | undefined,
+    username: string | undefined,
+    password: string
+}
+
+
+
 class UserService {
     
     private static generateAccessToken(id:number,email:string) {
@@ -53,15 +61,15 @@ class UserService {
         try {
             return await prismaClient.user.findUnique({ where: { email: email } })
         } catch (error) {
-            throw new Error("Something went wrong");
+            throw new Error("Something went wrong while finding userbyemil");
         }
     }
 
-    private static async getUsername(username:string){
+    private static async getByUsername(username:string){
         try {
             return await prismaClient.user.findUnique({ where: { username: username } })
         } catch (error) {
-            throw new Error("Something went wrong");
+            throw new Error("Something went wrong while finding byusername");
         }
     }
 
@@ -72,7 +80,7 @@ class UserService {
             if(user){
                 throw new Error("User alrady Exists");
             }
-            const usrname =await this.getUsername(params.username);
+            const usrname =await this.getByUsername(params.username);
             
             if(usrname){
                 throw new Error("Username Alrady Exists");                
@@ -96,14 +104,47 @@ class UserService {
                 // Other options can be set as per your requirements
               });
 
-            return res.status(200).json({ message: 'User created!' });
-
+            return res.status(200).json({ message: 'User created!'});
         } catch (error: any) {
-            console.log(error);
+            // console.log(error);
             return res.status(500).json({ error: "Internal Server Error", errorMessage: error.message });
         }
 
     }
+
+
+    public static async loginUser(params:LoginInterface,res:Response){
+        try {
+          const user = await (params.email ? this.getUserByEmail(params.email!) : this.getByUsername(params.username!));
+            if(!user){
+                throw new Error("User Not Found");
+            }
+
+            const match = await bcrypt.compare(params.password, user.password);
+            
+            if(!match) {
+                res.status(401).json({error:"Password wrong"});
+                return;
+            }
+
+            const jwt = this.generateAccessToken(user.id,user.email);
+
+            const expirationDate = new Date();
+            expirationDate.setDate(expirationDate.getDate() + 7)
+            res.cookie('token', jwt, {
+                expires:expirationDate, // Expires after 15 minutes
+                httpOnly: true, // Cookie is only accessible via HTTP(S)
+                // Other options can be set as per your requirements
+              });
+
+            return res.status(200).json({ message: 'Login Sucess!' });
+            
+        } catch (error:any) {
+            return res.status(500).json({ error: "Internal Server Error", errorMessage: error.message });
+        }
+    }
+
+
 }
 
 export default UserService;

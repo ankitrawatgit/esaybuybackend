@@ -13,6 +13,7 @@ app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 app.use(cookieParser());
 app.use(express_1.default.json());
 app.use('/auth', authroute_1.default);
+//test code
 app.use('/', Jwtvarify_1.default);
 app.post('/', (req, res) => {
     console.log(req.user);
