@@ -19,7 +19,7 @@ const jwtvarify = (req:any,res:any,next:any)=>{
         });
     }
     
-    req.user = user;
+    req.body.user = user;
     next();
 }
 

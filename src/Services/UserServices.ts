@@ -103,8 +103,17 @@ class UserService {
                 httpOnly: true, // Cookie is only accessible via HTTP(S)
                 // Other options can be set as per your requirements
               });
+            
+            
 
-            return res.status(200).json({ message: 'User created!'});
+            return res.status(200).json({message:"User created!",user:{
+                id: newuser.id,
+                name: newuser.name,
+                username: newuser.username,
+                email: newuser.email,
+                image: newuser.image
+            }});
+
         } catch (error: any) {
             // console.log(error);
             return res.status(500).json({ error: "Internal Server Error", errorMessage: error.message });
@@ -137,12 +146,39 @@ class UserService {
                 // Other options can be set as per your requirements
               });
 
-            return res.status(200).json({ message: 'Login Sucess!' });
-            
+            return res.status(200).json({ message: 'Login Sucess!',user:{
+                id: user.id,
+                name: user.name,
+                username: user.username,
+                email: user.email,
+                image: user.image
+            }});
+
         } catch (error:any) {
             return res.status(500).json({ error: "Internal Server Error", errorMessage: error.message });
         }
     }
+
+    public static async getLogedInuser(email:string,res:Response){
+        try {
+            const user = await this.getUserByEmail(email);
+            if(!user){
+                throw new Error("User Not Exists")
+            }
+
+            res.status(200).json({user:{
+                id: user.id,
+                name: user.name,
+                username: user.username,
+                email: user.email,
+                image: user.image
+            }})
+
+        } catch (error:any) {
+            return res.status(500).json({ error: "Internal Server Error", errorMessage: error.message });
+        }
+    }   
+
 
 
 }

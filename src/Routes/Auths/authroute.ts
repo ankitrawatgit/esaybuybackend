@@ -1,6 +1,7 @@
-import { Router, Request, Response } from "express";
+import { Router, Request, Response, request } from "express";
 import UserService from "../../Services/UserServices";
 import { body, oneOf, validationResult } from "express-validator";
+import jwtvarify from "../../Middleware/Jwtvarify";
 
 const authrouter = Router();
 
@@ -45,6 +46,18 @@ authrouter.post('/createuser', [
     }
     
     )
+
+
+    authrouter.post('/getLogedInuser',jwtvarify,(req:Request,res:Response)=>{
+        console.log(req.body.user);
+        
+        if(!req.body.user){
+            return res.status(401).json({ error: "User Not authorized!"});
+        }
+
+        UserService.getLogedInuser(req.body.user.email,res);
+        
+    })
 
 
 export default authrouter;
