@@ -1,6 +1,6 @@
 import UserService from "../Services/UserServices";
 
-const jwtvarify = (req:any,res:any,next:any)=>{
+const Tokenvarify = (req:any,res:any,next:any)=>{
     if (!req.cookies.token) {
         return res.status(401).json({
             "error": "Auth error",
@@ -23,4 +23,4 @@ const jwtvarify = (req:any,res:any,next:any)=>{
     next();
 }
 
-export default jwtvarify;
+export default Tokenvarify;

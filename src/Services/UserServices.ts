@@ -123,6 +123,7 @@ class UserService {
 
 
     public static async loginUser(params:LoginInterface,res:Response){
+        
         try {
           const user = await (params.email ? this.getUserByEmail(params.email!) : this.getByUsername(params.username!));
             if(!user){
@@ -172,7 +173,7 @@ class UserService {
                 username: user.username,
                 email: user.email,
                 image: user.image
-            }})
+            }});
 
         } catch (error:any) {
             return res.status(500).json({ error: "Internal Server Error", errorMessage: error.message });

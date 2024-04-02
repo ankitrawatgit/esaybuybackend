@@ -44,8 +44,9 @@ model Post {
   title        String
   description  String
   tags         Tags[]
+  category     String
   images       Image[]
-   
+  price        Int
   authorid Int
   author User @relation("Userpost",fields: [authorid],references: [id])
 }

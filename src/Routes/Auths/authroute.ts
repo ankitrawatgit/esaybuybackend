@@ -1,7 +1,7 @@
 import { Router, Request, Response, request } from "express";
 import UserService from "../../Services/UserServices";
 import { body, oneOf, validationResult } from "express-validator";
-import jwtvarify from "../../Middleware/Jwtvarify";
+import Tokenvarify from "../../Middleware/TokenVarify";
 
 const authrouter = Router();
 
@@ -48,7 +48,7 @@ authrouter.post('/createuser', [
     )
 
 
-    authrouter.post('/getLogedInuser',jwtvarify,(req:Request,res:Response)=>{
+    authrouter.post('/getLogedInuser',Tokenvarify,(req:Request,res:Response)=>{
         console.log(req.body.user);
         
         if(!req.body.user){
