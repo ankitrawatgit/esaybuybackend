@@ -2,6 +2,7 @@ import express from 'express';
 import authrouter from './Routes/Auths/authroute';
 import jwtvarify from './Middleware/TokenVarify';
 import postrouter from './Routes/Posts/Postrouter';
+import PostService from './Services/PostServices';
 var cookieParser = require('cookie-parser');
 var cors = require('cors');
 const app = express();
@@ -11,6 +12,10 @@ app.use(express.json());
 
 app.use('/auth',authrouter);
 app.use('/post',postrouter);
+
+// app.post('/createcategory',(req,res)=>{
+//     PostService.createCategory(res)
+// })
 
 //test code
 app.use('/',jwtvarify);

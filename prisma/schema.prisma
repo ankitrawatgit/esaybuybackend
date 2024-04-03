@@ -14,39 +14,34 @@ datasource db {
 }
 
 model User {
-  id   Int                   @id @default(autoincrement())
-  name String
-  username String @unique
-  email String @unique
-  password String
-  image String?
-
-  Posts Post[]   @relation("Userpost")
+  id        Int      @id @default(autoincrement())
+  name      String
+  username  String   @unique
+  email     String   @unique
+  password  String
+  image     String?
+  createdAt DateTime @default(now())
+  Posts     Post[]   @relation("Userpost")
 }
 
-
-model Image {
-  id      Int    @id @default(autoincrement())
-  url     String
-  post    Post   @relation(fields: [postId], references: [id])
-  postId  Int
-}
-
-model Tags{
-  id      Int    @id @default(autoincrement())
-  tag     String
-  post    Post   @relation(fields: [postId], references: [id])
-  postId  Int
+model Category {
+  id     Int                 @id @default(autoincrement())
+  tag    String
+  posts     Post[]
 }
 
 model Post {
-  id           Int      @id @default(autoincrement())
-  title        String
-  description  String
-  tags         Tags[]
-  category     String
-  images       Image[]
-  price        Int
+  id          Int                 @id @default(autoincrement())
+  title       String
+  description String
+  category    Category @relation(fields: [categoryId], references: [id])
+  categoryId  Int
+  images      String[]
+  price       Int
+
+  createdAt DateTime @default(now())
+
   authorid Int
-  author User @relation("Userpost",fields: [authorid],references: [id])
+  author   User @relation("Userpost", fields: [authorid], references: [id])
 }
+

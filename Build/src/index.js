@@ -15,6 +15,9 @@ app.use(cookieParser());
 app.use(express_1.default.json());
 app.use('/auth', authroute_1.default);
 app.use('/post', Postrouter_1.default);
+// app.post('/createcategory',(req,res)=>{
+//     PostService.createCategory(res)
+// })
 //test code
 app.use('/', TokenVarify_1.default);
 app.post('/', (req, res) => {
