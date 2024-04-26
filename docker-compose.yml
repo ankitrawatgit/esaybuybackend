@@ -11,6 +11,16 @@ services:
         POSTGRES_USER: ankit
         POSTGRES_DB: easybuydb
         POSTGRES_PASSWORD: ankitrawat
-    
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    ports:
+      - 5050:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "your@email.com"
+      PGADMIN_DEFAULT_PASSWORD: "yourpassword"
+    restart: unless-stopped
+
 volumes:
   postgres_data:

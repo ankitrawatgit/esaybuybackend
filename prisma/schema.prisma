@@ -27,6 +27,7 @@ model User {
 model Category {
   id     Int                 @id @default(autoincrement())
   tag    String
+  icon   String
   posts     Post[]
 }
 
@@ -38,6 +39,7 @@ model Post {
   categoryId  Int
   images      String[]
   price       Int
+  Address   String
 
   createdAt DateTime @default(now())
 

@@ -49,11 +49,24 @@ class UserService {
 
     }
 
-    public static async getUserById(id:number){
+    public static async getUserById(id:number,res:Response){
         try {
-            return await prismaClient.user.findUnique({ where: { id:id } })
-        } catch (error) {
-            throw new Error("Something went wrong");
+            const user =  await prismaClient.user.findUnique({ where: { id:id } })
+            if(!user){
+                return res.status(404).json({message:"user not found."})
+            }
+            
+           return res.status(200).json({user:{
+                id: user.id,
+                name: user.name,
+                username: user.username,
+                email: user.email,
+                image: user.image,
+                createdAt:user.createdAt,
+            }});
+
+        } catch (error:any) {
+            return res.status(500).json({ error: "Internal Server Error", errorMessage: error.message });
         }
     }
 
@@ -91,7 +104,7 @@ class UserService {
             // run npx prisma migrate dev to update schema
             const newuser = await prismaClient.user.create({ data: { name: params.name,username:params.username, email: params.email, password: hashedpass, image: params.image} })
 
-            // console.log(newuser);
+            // //console.log(newuser);
 
             const jwt = this.generateAccessToken(newuser.id,newuser.email);
 
@@ -115,7 +128,7 @@ class UserService {
             }});
 
         } catch (error: any) {
-            // console.log(error);
+            // //console.log(error);
             return res.status(500).json({ error: "Internal Server Error", errorMessage: error.message });
         }
 
@@ -133,7 +146,7 @@ class UserService {
             const match = await bcrypt.compare(params.password, user.password);
             
             if(!match) {
-                res.status(401).json({error:"Password wrong"});
+                res.status(401).json({errorMessage:"Password wrong"});
                 return;
             }
 
@@ -172,13 +185,47 @@ class UserService {
                 name: user.name,
                 username: user.username,
                 email: user.email,
-                image: user.image
+                image: user.image,
+                createdAt:user.createdAt
             }});
 
         } catch (error:any) {
             return res.status(500).json({ error: "Internal Server Error", errorMessage: error.message });
         }
     }   
+
+
+    public static async updateProfile(userId: number, newData: { name?: string, image?: string }, res: Response) {
+        try {
+            const user = await prismaClient.user.findUnique({ where: { id: userId } });
+            if (!user) {
+                throw new Error("User not found");
+            }
+    
+            // Update only name and image if provided in newData
+            const updatedUser = await prismaClient.user.update({
+                where: { id: userId },
+                data: {
+                    name: newData.name !== undefined ? newData.name : user.name,
+                    image: newData.image !== undefined ? newData.image : user.image,
+                },
+            });
+    
+            return res.status(200).json({
+                message: "Profile updated successfully!",
+                user: {
+                    id: updatedUser.id,
+                    name: updatedUser.name,
+                    username: updatedUser.username,
+                    email: updatedUser.email,
+                    image: updatedUser.image
+                }
+            });
+        } catch (error: any) {
+            return res.status(500).json({ error: "Internal Server Error", errorMessage: error.message });
+        }
+    }
+
 
 
 

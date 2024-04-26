@@ -9,12 +9,32 @@ const postrouter = Router();
 postrouter.post('/createPost',Tokenvarify,
 [
     body('title').isLength({min:10,max:50}),
-    body('discription').isLength({min:10,max:100}),
+    body('description').isLength({min:10,max:200}),
     body('price').isNumeric(),
+    body('Address').isLength({min:5,max:30}),
     body('images').isArray().isLength({min:2}),
     body('categoryid').isNumeric()
 
 ], async(req:any,res:Response)=>{
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ error: "Validation Error occured!",data:errors});
+    }
+    
+    if(!req.body.user){
+        return res.status(404).json({ error: "User not varifyed." });
+    }
+    
+   
+    PostService.CreatePost(req.body,res);
+    
+    
+});
+
+postrouter.post('/delete',Tokenvarify,[
+    body('id').isNumeric()
+],(req:Request,res:Response)=>{
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -24,12 +44,13 @@ postrouter.post('/createPost',Tokenvarify,
     if(!req.body.user){
         return res.status(404).json({ error: "User not varifyed." });
     }
-    
-    console.log(req.body);
-   
-    PostService.CreatePost(req.body,res);
-    
-});
+
+    const data = req.body;
+
+    PostService.DeletePost(data,res);
+
+})
+
 
 postrouter.get('/getAll',(_req:Request,res:Response)=>{
     PostService.GetAllpost(res);
@@ -47,6 +68,17 @@ postrouter.get('/getpostbyCategory',[
     PostService.GetPostsByCategoriId(req.body.ids,res);
     
 })
+
+
+postrouter.post('/getbyuserid',(req:Request,res:Response)=>{
+    const id = req.body.id;
+    
+    if(!id){
+        return res.status(400).json({error:"validation error."})
+    }
+    PostService.GetPostByUserid(id,res);
+})
+
 
 
 export default postrouter;

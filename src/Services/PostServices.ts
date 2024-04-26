@@ -8,26 +8,52 @@ type user = {
 
 interface Postdata {
     title: string,
-    discription: string,
+    description: string,
     price: number,
+    Address:string,
     images: string[],
     categoryid: number,
     user: user
 }
 
+interface DeletePostdata{
+    id:number,
+    user:user
+}
 
 class PostService {
 
 
+    public static async DeletePost(params:DeletePostdata,res:Response){
+        try {
+            const post = await prismaClient.post.findFirst({where:{id:params.id}});
+            if(!post){
+                return res.status(404).json({error:"Post Not found founded"})
+            }
+
+            if(post.authorid != params.user.id){
+                return res.status(404).json({error:"This is not your post"})
+            }
+
+            await prismaClient.post.delete({where:{id:post.id}})
+
+            return res.status(200).json({message:"Deleted Sucessfully",id:post.id})
+
+        } catch (error) {
+            
+        }
+    }
+
+
     public static async GetPostsByCategoriId(ids:number[],res:Response){
         try {
-            console.log(ids);
+            //console.log(ids);
     
             const posts: any[] = [];
     
             await Promise.all(ids.map(async (id) => {
                 const post = await prismaClient.category.findFirst({ where: { id }, include: { posts: true } });
-                console.log(post);
+                //console.log(post);
     
                 if (post) {
                     posts.push(post);
@@ -40,10 +66,54 @@ class PostService {
         }
     }
 
+    public static async GetPostByUserid(id:number,res:Response){
+        //console.log(id);
+        
+        try {
+            const Allposts = await prismaClient.post.findMany({where:{
+                authorid:id
+            },include:{category:{
+                select:{
+                    id:true
+                }
+            },author:{
+                select: {
+                    id: true,
+                    name: true,
+                    username: true,
+                    email: true,
+                    image: true,
+                }
+            }}})    ;
+            //console.log(Allposts);
+            
+            if(!Allposts){
+                return res.status(404).json({error:"No Posts founded"})
+            }
+
+            return res.status(200).json({message:"Sucess",posts:Allposts})
+
+        } catch (error:any) {
+            return res.status(500).json({ error: "Internal Server Error", errorMessage: error.message });
+        }
+    }
+
     public static async GetAllpost(res:Response){
         try {
-            const Allposts = await prismaClient.post.findMany({where:{},include:{category:true}})    ;
-            console.log(Allposts);
+            const Allposts = await prismaClient.post.findMany({where:{},include:{category:{
+                select:{
+                    id:true
+                }
+            },author:{
+                select: {
+                    id: true,
+                    name: true,
+                    username: true,
+                    email: true,
+                    image: true,
+                }
+            }}})    ;
+            //console.log(Allposts);
             
             if(!Allposts){
                 return res.status(404).json({error:"No Posts founded"})
@@ -58,10 +128,14 @@ class PostService {
 
     public static async CreatePost(params: Postdata, res: Response) {
         try {
-            const { title, discription, price, images, categoryid, user } = params;
+            const { title, description, price,Address, images, categoryid, user } = params;
+            
+            //console.log("params",params);
+            
+            
 
-            console.log(params);
-            const findcategory = await prismaClient.category.findFirst({where:{id:categoryid}})
+            const findcategory = await prismaClient.category.findFirst({where:{id:1}})
+            //console.log(findcategory);
             
             if(!findcategory){
                 return res.status(404).json({error:"categorynotfound"})
@@ -70,14 +144,15 @@ class PostService {
             const newpost = await prismaClient.post.create({
                 data: {
                     title,
-                    description: discription,
+                    description,
                     price,
+                    Address,
                     images,
-                    categoryId:categoryid,
+                    categoryId:1,
                     authorid:user.id
             }});
 
-            console.log(newpost);
+            //console.log(newpost);
 
 
             return res.status(200).json({ message: "Post created!", id: newpost.id });
@@ -87,25 +162,6 @@ class PostService {
         }
 
     }
-
-
-    //for admins only, means we need to call it mannually, maybe we implement it better later
-    public static async createCategory(res:Response){
-        
-        const categoriesData = [
-            { tag: "Electronic" },
-            { tag: "Clothing" },
-            { tag: "Books" }
-          ];
-
-        const newcategory = await prismaClient.category.createMany({data:categoriesData})
-
-        console.log(newcategory);
-
-        return res.status(200).json({message:"done"})
-        
-    }
-
 
 
 
