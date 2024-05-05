@@ -80,5 +80,18 @@ postrouter.post('/getbyuserid',(req:Request,res:Response)=>{
 })
 
 
+postrouter.post('/search',[body("searchquery").isString().isLength({min:2})],(req:Request,res:Response)=>{
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ error: "Validation Error occured!"});
+    }
+
+    
+    const searchquery = req.body.searchquery;
+    
+    PostService.serachpost(searchquery,res)
+})
+
 
 export default postrouter;

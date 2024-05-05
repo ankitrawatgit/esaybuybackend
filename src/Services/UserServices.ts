@@ -111,11 +111,10 @@ class UserService {
             const expirationDate = new Date();
             expirationDate.setDate(expirationDate.getDate() + 7)
             res.cookie('token', jwt, {
-                // Cookie options
-                expires:expirationDate, // Expires after 15 minutes
-                httpOnly: true, // Cookie is only accessible via HTTP(S)
-                // Other options can be set as per your requirements
-              });
+                expires: expirationDate,
+                httpOnly: true,
+                secure:true,
+            });
             
             
 
@@ -155,10 +154,8 @@ class UserService {
             const expirationDate = new Date();
             expirationDate.setDate(expirationDate.getDate() + 7)
             res.cookie('token', jwt, {
-                expires:expirationDate, // Expires after 15 minutes
-                httpOnly: true, // Cookie is only accessible via HTTP(S)
-                // Other options can be set as per your requirements
-              });
+                expires: expirationDate,
+            });
 
             return res.status(200).json({ message: 'Login Sucess!',user:{
                 id: user.id,
@@ -179,6 +176,26 @@ class UserService {
             if(!user){
                 throw new Error("User Not Exists")
             }
+            
+            const rooms = await prismaClient.chatRoom.findMany({
+                where: {
+                    participants: {
+                        some: { id: user.id }
+                    },
+                },
+                include:{
+                    participants:{
+                        select:{
+                            id: true,
+                            name: true,
+                            username: true,
+                            email: true,
+                            createdAt: true,
+                            image:true
+                        }
+                    }
+                }
+            });
 
             res.status(200).json({user:{
                 id: user.id,
@@ -186,7 +203,8 @@ class UserService {
                 username: user.username,
                 email: user.email,
                 image: user.image,
-                createdAt:user.createdAt
+                createdAt:user.createdAt,
+                chatrooms:rooms
             }});
 
         } catch (error:any) {

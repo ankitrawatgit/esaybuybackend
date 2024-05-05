@@ -22,12 +22,14 @@ model User {
   image     String?
   createdAt DateTime @default(now())
   Posts     Post[]   @relation("Userpost")
+  chats   chatRoom[] 
 }
 
 model Category {
   id     Int                 @id @default(autoincrement())
   tag    String
   icon   String
+  iconFamily String
   posts     Post[]
 }
 
@@ -45,5 +47,12 @@ model Post {
 
   authorid Int
   author   User @relation("Userpost", fields: [authorid], references: [id])
+}
+
+model chatRoom{
+  id            Int          @id @default(autoincrement())
+  participants  User[]   
+  roomid        String
+  createdAt     DateTime     @default(now())
 }
 

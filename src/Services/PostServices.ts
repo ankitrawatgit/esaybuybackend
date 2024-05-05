@@ -163,6 +163,41 @@ class PostService {
 
     }
 
+    public static async serachpost(query:string,res:Response){
+        try {
+            const posts = await prismaClient.post.findMany({
+              where: {
+                OR: [
+                  { title: { contains: query, mode: 'insensitive' } }, // Search in title
+                  { description: { contains: query, mode: 'insensitive' } }, // Search in description
+                  { Address: { contains: query, mode: 'insensitive' } },
+                  {category: { tag: { contains: query, mode: 'insensitive' } } }, // Search in category tag
+                  { author: { name: { contains: query, mode: 'insensitive' } } } // Search in address
+                ]
+              },
+              include: {
+                author: {
+                    select:{
+                        id: true,
+                        name: true,
+                        username: true,
+                        email: true,
+                        image: true,
+                    }
+                } // Include author information
+              }
+            });
+
+            
+
+
+            return res.status(200).json({posts:posts});
+          } catch (error:any) {
+            console.error('Error searching posts:', error);
+            return res.status(500).json({ error: "Internal Server Error", errorMessage: error.message });
+          }
+    }
+
 
 
 }

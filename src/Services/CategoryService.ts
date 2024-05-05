@@ -2,9 +2,9 @@ import { Response } from "express";
 import prismaClient from "../db/prismaclient";
 
 class CateogryService{
-    public static async createCategory(name:string,icon:string,res:Response){
+    public static async createCategory(name:string,icon:string,iconFamily:string,res:Response){
         try {
-            const newcategory = await prismaClient.category.create({data:{tag:name,icon:icon}})
+            const newcategory = await prismaClient.category.create({data:{tag:name,icon:icon,iconFamily:iconFamily}})
             return res.status(200).json({message:"Category created!",category:newcategory})
         } catch (error) {
             return res.status(500).json({message:"Server Error",error})

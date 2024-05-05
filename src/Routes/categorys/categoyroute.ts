@@ -10,12 +10,12 @@ categoryrouter.post("/createCategory",[
     body('name').isString()
     
 ],(req:Request,res:Response)=>{
-    const {name,icon,key} = req.body;
+    const {name,icon,iconFamily,key} = req.body;
     if(key!="unknowpassword"){
         return res.status(404).json({error:'path not found'})
     }
 
-    CateogryService.createCategory(name,icon,res);
+    CateogryService.createCategory(name,icon,iconFamily,res);
 
 });
 
