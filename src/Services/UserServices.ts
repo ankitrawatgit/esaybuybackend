@@ -101,7 +101,7 @@ class UserService {
 
             const hashedpass = await this.generateHash(params.password);
 
-            // run npx prisma migrate dev to update schema
+            
             const newuser = await prismaClient.user.create({ data: { name: params.name,username:params.username, email: params.email, password: hashedpass, image: params.image} })
 
             // //console.log(newuser);

@@ -134,7 +134,7 @@ class PostService {
             
             
 
-            const findcategory = await prismaClient.category.findFirst({where:{id:1}})
+            const findcategory = await prismaClient.category.findFirst({where:{id:categoryid}})
             //console.log(findcategory);
             
             if(!findcategory){
@@ -148,7 +148,7 @@ class PostService {
                     price,
                     Address,
                     images,
-                    categoryId:1,
+                    categoryId:categoryid,
                     authorid:user.id
             }});
 

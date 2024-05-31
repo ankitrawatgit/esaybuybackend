@@ -112,7 +112,7 @@ class PostService {
             try {
                 const { title, description, price, Address, images, categoryid, user } = params;
                 //console.log("params",params);
-                const findcategory = yield prismaclient_1.default.category.findFirst({ where: { id: 1 } });
+                const findcategory = yield prismaclient_1.default.category.findFirst({ where: { id: categoryid } });
                 //console.log(findcategory);
                 if (!findcategory) {
                     return res.status(404).json({ error: "categorynotfound" });
@@ -124,7 +124,7 @@ class PostService {
                         price,
                         Address,
                         images,
-                        categoryId: 1,
+                        categoryId: categoryid,
                         authorid: user.id
                     }
                 });

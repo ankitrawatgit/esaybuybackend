@@ -71,7 +71,7 @@ class ChatService {
                         }
                     }
                 });
-                return res.status(200).json({ message: "Room created successfully", room: newRoom.id });
+                return res.status(200).json({ message: "Room created successfully", roomid: newRoom.roomid });
             }
             catch (error) {
                 return res.status(500).json({ error: "Internal Server Error", errorMessage: error.message });
@@ -131,7 +131,7 @@ class ChatService {
                 const firestore = (0, firestore_1.getFirestore)(app);
                 const messagesCollectionRef = (0, firestore_1.collection)(firestore, `chats/${roomId}/messages`);
                 yield (0, firestore_1.deleteDoc)((0, firestore_1.doc)(messagesCollectionRef));
-                console.log(messagesCollectionRef);
+                // console.log(messagesCollectionRef);
                 // Delete the chat room
                 yield prismaclient_1.default.chatRoom.deleteMany({
                     where: { roomid: roomId }

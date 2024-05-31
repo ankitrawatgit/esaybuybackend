@@ -67,7 +67,7 @@ class ChatService {
                 }
             });
 
-            return res.status(200).json({ message: "Room created successfully", room: newRoom.id });
+            return res.status(200).json({ message: "Room created successfully", roomid: newRoom.roomid });
         } catch (error: any) {
             return res.status(500).json({ error: "Internal Server Error", errorMessage: error.message });
         }
